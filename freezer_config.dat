@@ -1,0 +1,5 @@
+#	Note: Only lines with 5 tab delimited fields will be read.
+#	Freezer Configuration file.
+1	freezer1	upright1	FF0000	tcp://111.111.1.11
+2	freezer2	chest1	FF0000	tcp://111.111.1.11
+3	freezer3	chest2	FF0000	tcp://222.222.2.22
