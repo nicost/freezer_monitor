@@ -34,26 +34,26 @@ $j=0;
 foreach ($myarray as $receiver => $array_of_freezers) {
 	print "Receiver: $receiver\n";
     foreach($array_of_freezers as $id => $freezer_array) {
-    $db_name = $freezer_array[1];
-    $label   = $freezer_array[2];   
-    print "$label \t : $db_name \t : ";
-
-    
-
-			
-			    // Check for a lockfile
-			    
-			    $filename = $label.".lock";
-			    
-			    if (file_exists($filename)) {
-			    	unlink($filename);
-			    	print "Removed $filename";
-			 	   }      
-
-          print "\n";
- 	}
-  print "\n";
- }
+       $db_name = $freezer_array[1];
+       $label   = $freezer_array[2];   
+       print "$label \t : $db_name \t : ";
+            
+       // Check for a lockfile
+       $filename = $label.".lock";
+                
+       if (file_exists($filename)) {
+          unlink($filename);
+          print "Removed $filename";
+       }      
+       print "\n";
+   }
+   print "\n";
+   $f = substr($receiver, 6) . ".lock";
+   if (file_exists($f)) {
+      unlink($f);
+      print "Removed $f";
+   }      
+}
 print "</pre>";
 
 
@@ -61,12 +61,12 @@ print "</pre>";
  // Make Graphs
 $myarray = getFreezers($datafile);
 $rec_count = count($myarray);
- print "Making graphs...";
- $j=0;
+print "Making graphs...";
+$j=0;
 foreach ($myarray as $receiver => $array_of_freezers) {
    $j++;
    $result = makeGraph($receiver,$array_of_freezers,$graphname,$j);
-	}
+}
 print "Done.\n";
 print "</pre>";
 

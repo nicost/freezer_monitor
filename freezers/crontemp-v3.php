@@ -43,7 +43,20 @@ foreach ($myarray as $receiver => $array_of_freezers) {
    }
    else { 
       print "No connection, skipping this receiver."; 
-      sendNoReceiverAlarm( getSysadminEmail() );
+		$receiverLockFile = substr($receiver, 6) . ".lock";
+		if (file_exists($receiverLockFile)) {
+		   print " Lock file detected, no alarm send";
+		}
+		else {
+		   sendNoReceiverAlarm( getSysadminEmail() );
+			$myLock = fopen($receiverLockFile, "w");
+			if ($myLock == false) {
+		   	print "Could not create lock file $receiverLockFile";
+			} else {
+				fwrite ($myLock, "Locked");
+				fclose ($myLock);
+			}
+      }
    }
 }
 
