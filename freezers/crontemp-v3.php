@@ -6,6 +6,15 @@
 
 include 'thermo_includes.php';
 
+function createLockFile($filename = '') {
+   $myLock = fopen($filename, "w");
+   if ($myLock == false) {
+      print "Could not create lock file $filename";
+   } else {
+      fwrite ($myLock, "Locked");
+      fclose ($myLock);
+   }
+}
 
 // ############################ MAIN #############################
 
@@ -23,9 +32,17 @@ print "Found $rec_count receivers.\n";
 foreach ($myarray as $receiver => $array_of_freezers) {
    print "\n";
    print "Address: $receiver\t"; 
+   $receiverLockFile = substr($receiver, 6) . ".lock";
+   $receiverLockFile2 = $receiverLockFile . "2";
    
    $mytemps = getData($receiver);   // gets all temps for receiver. [id]=>[temp]
    if ($mytemps != 999) {
+		if (file_exists($receiverLockFile)) {
+         unlink($receiverLockFile);
+      }
+		if (file_exists($receiverLockFile2)) {
+         unlink($receiverLockFile2);
+      }
    
       $tempcount = count($mytemps);
       print "$tempcount temperatures\n";
@@ -43,19 +60,19 @@ foreach ($myarray as $receiver => $array_of_freezers) {
    }
    else { 
       print "No connection, skipping this receiver."; 
-		$receiverLockFile = substr($receiver, 6) . ".lock";
 		if (file_exists($receiverLockFile)) {
-		   print " Lock file detected, no alarm send";
+         // only send an alarm the second time we can do not 
+         // detect the transceiver
+         if (file_exists($receiverLockFile)) {
+            print " Lock file detected, no alarm send";
+         }
+         else {
+            sendNoReceiverAlarm( getSysadminEmail() );
+            createLockFile($receiverLockFile2);
+         }
 		}
 		else {
-		   sendNoReceiverAlarm( getSysadminEmail() );
-			$myLock = fopen($receiverLockFile, "w");
-			if ($myLock == false) {
-		   	print "Could not create lock file $receiverLockFile";
-			} else {
-				fwrite ($myLock, "Locked");
-				fclose ($myLock);
-			}
+         createLockFile($receiverLockFile);
       }
    }
 }
