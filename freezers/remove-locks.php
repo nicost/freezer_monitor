@@ -2,7 +2,7 @@
 // See thermo_includes.php for setting threshold value, email addresses etc.
 // JDeRisi 2013
 // Minor changes by Nico Stuurman, 2015
-// Copyright Regents of the Univeristy of California
+// Copyright Regents of the University of California
 
 require_once 'thermo_includes.php';
 ?>
@@ -29,11 +29,10 @@ $myarray = getFreezers($datafile);
 $rec_count = count($myarray);
 print "Removing Lock files.\n";
 
-// 
 $j=0;
 foreach ($myarray as $receiver => $array_of_freezers) {
 	print "Receiver: $receiver\n";
-    foreach($array_of_freezers as $id => $freezer_array) {
+   foreach($array_of_freezers as $id => $freezer_array) {
        $db_name = $freezer_array[1];
        $label   = $freezer_array[2];   
        print "$label \t : $db_name \t : ";
@@ -52,6 +51,11 @@ foreach ($myarray as $receiver => $array_of_freezers) {
    if (file_exists($f)) {
       unlink($f);
       print "Removed $f";
+   }      
+   $f2 = substr($receiver, 6) . ".lock2";
+   if (file_exists($f2)) {
+      unlink($f2);
+      print "Removed $f2";
    }      
 }
 print "</pre>";
